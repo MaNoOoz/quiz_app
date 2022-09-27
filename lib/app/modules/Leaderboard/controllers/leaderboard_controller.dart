@@ -1,10 +1,15 @@
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:quiz_app/app/data/models/UserResponseModel.dart';
 
 import '../../../data/services/LeaderboardService.dart';
+import '../../utili/Constants.dart';
 
 class LeaderboardController extends GetxController {
+  final loadingStatus = LoadingStatus.completed.obs;
+
   var leaderService = LeaderboardService();
-  List<dynamic> listOfUsers = <dynamic>[].obs;
+  List<UserModel> allUsers = <UserModel>[].obs;
 
   final count = 0.obs;
   @override
@@ -15,7 +20,7 @@ class LeaderboardController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
-    await getTopUsersData();
+    await getTopUsers();
   }
 
   @override
@@ -23,17 +28,16 @@ class LeaderboardController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
-
-  Future<void> getTopUsersData() async {
+  Future<void> getTopUsers() async {
+    loadingStatus.value = LoadingStatus.loading;
     try {
       var l = await leaderService.getTopUsers();
-      // Logger().d(l);
-
-      var list = l!.toList();
-      listOfUsers.assignAll(list);
+      var list2 = l!.map((dynamic element) => UserModel.fromJson(element)).toList();
+      allUsers.assignAll(list2);
+      loadingStatus.value = LoadingStatus.completed;
     } catch (e) {
-      // Logger().d(e);
+      loadingStatus.value = LoadingStatus.error;
+      Logger().e(e);
     }
   }
 }

@@ -73,7 +73,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.SEND_NAME,
-      page: () => SendNameView(),
+      page: () => const SendNameView(),
       binding: SendNameBinding(),
     ),
     GetPage(

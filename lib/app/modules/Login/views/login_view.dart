@@ -38,9 +38,10 @@ class LoginView extends GetView<LoginController> {
                 SPACEV10,
                 SPACEV10,
                 SPACEV10,
-                Obx(() {
-                  return _buildPhoneInput(c);
-                }),
+                _buildPhoneInput(c),
+                // Obx(() {
+                //   return
+                // }),
                 SPACEV10,
                 SPACEV10,
                 SPACEV10,
@@ -154,46 +155,49 @@ class LoginView extends GetView<LoginController> {
             const SizedBox(
               height: 10,
             ),
-            Form(
-              key: c.formKey,
-              child: InternationalPhoneNumberInput(
-                errorMessage: "تأكد من الرقم/ الدولة",
+            Obx(() {
+              var form = Form(
+                key: c.formKey,
+                child: InternationalPhoneNumberInput(
+                  errorMessage: "تأكد من الرقم/ الدولة",
 
-                textStyle: TextStyle(color: Colors.blue),
-                initialValue: c.number.value,
-                selectorConfig: const SelectorConfig(
-                  selectorType: PhoneInputSelectorType.DIALOG,
-                  // useEmoji: true,
-                ),
-                countrySelectorScrollControlled: true,
-                ignoreBlank: false,
-                autoValidateMode: AutovalidateMode.onUserInteraction,
-                selectorTextStyle: const TextStyle(color: Colors.black),
-                textFieldController: c.mobileController,
-                formatInput: true,
-                // maxLength: 9,
-                keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
-                cursorColor: Colors.black,
+                  textStyle: TextStyle(color: Colors.blue),
+                  initialValue: c.number.value,
+                  selectorConfig: const SelectorConfig(
+                    selectorType: PhoneInputSelectorType.DIALOG,
+                    // useEmoji: true,
+                  ),
+                  countrySelectorScrollControlled: true,
+                  ignoreBlank: false,
+                  autoValidateMode: AutovalidateMode.onUserInteraction,
+                  selectorTextStyle: const TextStyle(color: Colors.black),
+                  textFieldController: c.mobileController.value,
+                  formatInput: true,
+                  // maxLength: 9,
+                  keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
+                  cursorColor: Colors.black,
 
-                inputDecoration: const InputDecoration(
-                  // contentPadding: const EdgeInsets.only(bottom: 15, left: 0),
-                  border: InputBorder.none,
-                  hintText: 'رقم الجوال',
-                  hintStyle: mainStyleLableSmall,
+                  inputDecoration: const InputDecoration(
+                    // contentPadding: const EdgeInsets.only(bottom: 15, left: 0),
+                    border: InputBorder.none,
+                    hintText: 'رقم الجوال',
+                    hintStyle: mainStyleLableSmall,
+                  ),
+                  onInputChanged: (PhoneNumber number) {
+                    c.number.value = number;
+                    // Logger().d(c.number.value);
+                  },
+                  onInputValidated: (bool value) {
+                    // Logger().d("$value");
+                  },
+                  onSaved: (PhoneNumber number) {
+                    c.number.value = number;
+                    // Logger().d(number);
+                  },
                 ),
-                onInputChanged: (PhoneNumber number) {
-                  c.number.value = number;
-                  // Logger().d(c.number.value);
-                },
-                onInputValidated: (bool value) {
-                  // Logger().d("$value");
-                },
-                onSaved: (PhoneNumber number) {
-                  c.number.value = number;
-                  // Logger().d(number);
-                },
-              ),
-            ),
+              ).obs;
+              return form.value;
+            }),
           ],
         ),
       ),

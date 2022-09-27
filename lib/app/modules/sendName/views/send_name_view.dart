@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:quiz_app/app/modules/Verification/views/verification_view.dart';
@@ -11,11 +10,7 @@ import '../../../routes/app_pages.dart';
 import '../controllers/send_name_controller.dart';
 
 class SendNameView extends GetView<SendNameController> {
-  SendNameView({Key? key}) : super(key: key) {
-    SchedulerBinding.instance.addPostFrameCallback((d) {
-      // final phoneNumber = Get.arguments;
-    });
-  }
+  const SendNameView({Key? key}) : super(key: key);
 
   static const String routeName = Routes.SEND_NAME;
 
@@ -69,7 +64,7 @@ Widget _buildRequestBtn(SendNameController c) {
         var ok1 = c.formKey.currentState!.validate();
         // var ok2 = c.formKey2.currentState!.validate();
         if (ok1) {
-          var res = await c.sendUserName(userName: c.userName);
+          var res = await c.updateUserName(userName: c.userName);
           if (res != null) {
             await Get.toNamed(VerificationView.routeName, arguments: res);
           }

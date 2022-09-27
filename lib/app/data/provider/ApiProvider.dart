@@ -9,7 +9,11 @@ import '../local/LocalStorage.dart';
 
 class ApiProvider {
   final String _baseUrl = "https://quizu.okoul.com/";
+
   LocalStorage storage = LocalStorage();
+
+  var mainToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiaWF0IjoxNjYzMzU4NDY1fQ.LlVAcArd2Bn3gtdanoHlfMOsHn0gRMqvVHozUk4bjWM";
 
   Future<dynamic> get(String url, {Map<String, String>? headers}) async {
     var responseJson;
@@ -22,9 +26,26 @@ class ApiProvider {
     return responseJson;
   }
 
+  Future<dynamic> post(String url, {Map<String, String>? headers, required String body}) async {
+    var responseJson;
+    try {
+      final response = await http.post(Uri.parse(_baseUrl + url), headers: buildHeaders2(), body: body);
+      responseJson = _response(response);
+    } on SocketException {
+      throw FetchDataException('No Internet connection');
+    }
+    return responseJson;
+  }
+
   dynamic _response(http.Response response) {
     switch (response.statusCode) {
       case 200:
+        var responseJson = json.decode(response.body.toString());
+        Logger().d("responseJson ---> ${responseJson}");
+
+        // print(responseJson);
+        return responseJson;
+      case 201:
         var responseJson = json.decode(response.body.toString());
         Logger().d("responseJson ---> ${responseJson}");
 
@@ -53,6 +74,19 @@ class ApiProvider {
     } else {
       headerToken = token;
     }
+
+    Map<String, String> headers = {};
+    headers["Content-Type"] = "application/json";
+    headers["Accept"] = "application/json";
+    headers["Access-Control_Allow_Origin"] = "*";
+    headers["Authorization"] = "Bearer $headerToken";
+    return headers;
+  }
+
+  Map<String, String> buildHeaders2() {
+    var headerToken = "";
+    headerToken = storage.read(key: TOKEN) ?? mainToken;
+    Logger().d(": $headerToken");
 
     Map<String, String> headers = {};
     headers["Content-Type"] = "application/json";

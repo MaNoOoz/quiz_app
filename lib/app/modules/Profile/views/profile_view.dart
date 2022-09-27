@@ -21,7 +21,7 @@ class ProfileView extends GetView<ProfileController> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await c.getUsersScores();
+            await c.getUserInfo();
           },
         ), //todo remove:
         body: Container(
@@ -38,23 +38,13 @@ class ProfileView extends GetView<ProfileController> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                buildTop(),
+                buildTop(c),
                 // SPACEV10,
                 SPACEV10,
-                buildUserInfo(c),
-                // Container(
-                //   padding: EdgeInsets.all(16),
-                //   width: double.infinity,
-                //   decoration: BoxDecoration(
-                //     borderRadius: const BorderRadius.all(Radius.circular(12)),
-                //     // border: Border.all(color: Colors.grey.withOpacity(0.5)),
-                //     // color: Colors.cyan.withOpacity(0.9),
-                //   ),
-                //   child: Column(children: [
-                //     Obx(() {}),
-                //     SPACEV10,
-                //   ]),
-                // ),
+                Obx(() {
+                  return buildUserInfo(c);
+                }),
+
                 SPACEV10,
                 SPACEV50,
                 SharedWidgets().buildTextLeft("النتائج السابقة", mainStyleTWM),
@@ -174,7 +164,7 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget buildTop() {
+  Widget buildTop(ProfileController c) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -186,7 +176,7 @@ class ProfileView extends GetView<ProfileController> {
             ),
             text: "",
             onPressed: () async {
-              await controller.logOUt();
+              await c.logOUt();
             }),
       ],
     );

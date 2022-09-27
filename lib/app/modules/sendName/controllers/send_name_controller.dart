@@ -2,11 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 import 'package:quiz_app/app/data/local/LocalStorage.dart';
 
-import '../../utili/Constants.dart';
+import '../../../data/provider/ApiProvider.dart';
 
 class SendNameController extends GetxController {
   //TODO: Implement SendNameController
@@ -25,42 +24,24 @@ class SendNameController extends GetxController {
 
   var isLoading = false;
 
-  Future<dynamic> sendUserName({required String userName}) async {
+  Future<dynamic> updateUserName({required String userName}) async {
     var headerToken = LocalStorage().read(key: TOKEN);
     Logger().d("headerToken : $headerToken");
 
-    var endpoint = "Name";
-    // var BASE_URL = "https://quizu.okoul.com/";
-    // var mainToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiaWF0IjoxNjYzMzU4NDY1fQ.LlVAcArd2Bn3gtdanoHlfMOsHn0gRMqvVHozUk4bjWM";
+    ApiProvider api = ApiProvider();
+    var endPoint = "Name";
+    var body = jsonEncode({
+      'OTP': '0000',
+      'name': '${userName}',
+    });
 
-    var headers = {
-      'Content-Type': 'application/json',
-      "Accept": "application/json",
-      "Access-Control_Allow_Origin": "*",
-      "Authorization": "Bearer $headerToken",
-    };
+    var res = await api.post(endPoint, body: body);
 
-    var url = "$BASE_URL$endpoint";
-    Logger().d(url);
-    var body = jsonEncode({'name': '${userName}'});
-    Logger().d("body : $userName");
+    // save it to local
+    // LocalStorage().saveData(key: TOKEN, value: res['token']);
 
-    var response = await http.post(
-      Uri.parse("$url"),
-      headers: headers,
-      body: body,
-    );
-    // Logger().d(response.body);
-
-    final data = jsonDecode(response.body);
-    // Logger().d(data);
-
-    if (response.statusCode == 201) {
-      // Logger().d(response.body);
-      // Logger().d(jsonEncode(response.body));
-      Map<String, dynamic> s = data;
-      Logger().d(s);
-    }
+    //;
+    return res;
   }
 
   @override

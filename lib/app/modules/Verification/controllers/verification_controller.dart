@@ -10,7 +10,7 @@ class VerificationController extends GetxController {
 
   /// check if user token valid on the server
   Future<void> checkToken(VerificationController c) async {
-    var res = await AuthService().isValidToken2();
+    var res = await AuthService().isValidTokenOnServer();
     bool isValid = res['success'];
     if (isValid) {
       await Get.offAll(const ControlView()); // TODO: send arguments ??

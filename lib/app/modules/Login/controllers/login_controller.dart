@@ -4,6 +4,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:logger/logger.dart';
 import 'package:quiz_app/app/modules/Verification/views/verification_view.dart';
 
+import '../../../data/models/LoginResponseModel.dart';
 import '../../../data/services/LoginService.dart';
 import '../../sendName/views/send_name_view.dart';
 import '../../utili/Constants.dart';
@@ -15,7 +16,7 @@ class LoginController extends GetxController {
   // PhoneNumber number = PhoneNumber(phoneNumber: "551954619", isoCode: 'SA');
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey2 = GlobalKey<FormState>();
-  final TextEditingController mobileController = TextEditingController();
+  final mobileController = TextEditingController().obs;
 
   final number = PhoneNumber(phoneNumber: "551954619", isoCode: 'SA', dialCode: '966').obs;
 
@@ -23,8 +24,9 @@ class LoginController extends GetxController {
   Future<bool> loginUser({required PhoneNumber mobileNumber}) async {
     loadingStatus.value = LoadingStatus.loading;
     var res = await service.getLogin(mobile: mobileNumber);
+    var model = LoginResponseModel.fromJson(res);
+    Logger().d("userName --- ${model.name}");
 
-    // var model = LoginResponseModel.fromJson(res);
     var userName = res["name"];
     // var mobileNum = res["mobile"];
     // Map <String, dynamic> data ={
@@ -70,6 +72,6 @@ class LoginController extends GetxController {
   @override
   void onClose() {
     super.onClose();
-    mobileController.dispose();
+    mobileController.value.dispose();
   }
 }

@@ -56,7 +56,7 @@ class QuizController extends GetxController {
   Future<void> getQuestionsList() async {
     loadingStatus.value = LoadingStatus.loading;
     try {
-      var l2 = await quizService.getData2();
+      var l2 = await quizService.getData();
       var list2 = l2!.map((dynamic element) => QuestionModel.fromJson(element)).toList();
       allQuestions.assignAll(list2);
       loadingStatus.value = LoadingStatus.completed;

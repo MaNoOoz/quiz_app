@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../data/models/UserResponseModel.dart';
 import '../../../routes/app_pages.dart';
 import '../../Widgets/Common/SharedWidgets.dart';
 import '../../utili/Constants.dart';
@@ -33,13 +34,12 @@ class LeaderboardView extends GetView<LeaderboardController> {
                     return Expanded(
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: c.listOfUsers.length,
+                        itemCount: c.allUsers.length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, int index) {
-                          var name = c.listOfUsers[index]['name'];
-                          var score = c.listOfUsers[index]['score'];
+                          var model = c.allUsers[index];
 
-                          return _buildItem(name, index, score);
+                          return _buildItem(model: model, index: index);
                         },
                       ),
                     );
@@ -53,7 +53,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
     );
   }
 
-  Widget _buildItem(name, int index, score) {
+  Widget _buildItem({required int index, required UserModel model}) {
     return FadeOutUp(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -67,7 +67,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
                 color: ([...Colors.primaries]..shuffle()).first,
                 child: Center(
                   child: Text(
-                    name.toString().characters.first.toUpperCase(),
+                    model.name.toString().characters.first.toUpperCase(),
                     style: mainStyleTWM,
                   ),
                 ),
@@ -79,11 +79,11 @@ class LeaderboardView extends GetView<LeaderboardController> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${name}",
+                    "${model.name}",
                     style: mainStyleLBB2,
                   ),
                   SPACEV10,
-                  Text("💪 ${(score).toString()}"),
+                  Text("💪 ${(model.score).toString()}"),
                 ],
               ),
             ),

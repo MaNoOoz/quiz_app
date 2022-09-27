@@ -3,8 +3,9 @@ import 'package:logger/logger.dart';
 import 'package:quiz_app/app/data/local/LocalStorage.dart';
 import 'package:quiz_app/app/data/models/GameModel.dart';
 
+import '../../../data/models/ProfileResponseModel.dart';
+import '../../../data/services/ProfileService.dart';
 import '../../IntroScreen/views/intro_screen_view.dart';
-import '../service/ProfileService.dart';
 
 class ProfileController extends GetxController {
   var profileService = ProfileService();
@@ -20,21 +21,14 @@ class ProfileController extends GetxController {
   // fake
   // final List<GameModel> listFromLocal = [GameModel(1, score: 1, userName: "userName", numberOfGames: 1)];
 
-  Future<void> getUsersData() async {
-    try {
-      var user = await profileService.getUserInfo();
-      var _name = user['name'];
-      var _mobile = user['mobile'];
-      name.value = _name;
-      mobile.value = _mobile.toString();
-      update();
-      Logger().d(name);
-    } catch (e) {
-      // Logger().d(e);
-    }
+  Future<void> getUserInfo() async {
+    var json = await profileService.getUserInfo();
+    var model = ProfileResponseModel.fromJson(json);
+    name.value = model.name!;
+    mobile.value = model.mobile!;
   }
 
-  Future<bool> getUsersScores() async {
+  Future<bool> getUserScore() async {
     try {
       final dataFromLocalString = storage.read(key: USER_GAMES);
       final List<GameModel> listFromLocal = GameModel.decode(dataFromLocalString);
@@ -74,8 +68,8 @@ class ProfileController extends GetxController {
   @override
   void onReady() async {
     super.onReady();
-    await getUsersData();
-    isPlayed.value = await getUsersScores();
+    await getUserInfo();
+    await getUserScore();
   }
 
   @override
