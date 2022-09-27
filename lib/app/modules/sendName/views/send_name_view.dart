@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:quiz_app/app/modules/Control/views/control_view.dart';
+import 'package:quiz_app/app/modules/Verification/views/verification_view.dart';
 import 'package:quiz_app/app/modules/Widgets/Common/SharedWidgets.dart';
 import 'package:quiz_app/app/modules/utili/Constants.dart';
 
@@ -39,7 +39,7 @@ class SendNameView extends GetView<SendNameController> {
                   FadeInLeft(
                     child: const Text(
                       'أدخل الأسم',
-                      style: mainStyleTB,
+                      style: mainTitleBlack,
                     ),
                   ),
                   SPACEV10,
@@ -69,8 +69,11 @@ Widget _buildRequestBtn(SendNameController c) {
         var ok1 = c.formKey.currentState!.validate();
         // var ok2 = c.formKey2.currentState!.validate();
         if (ok1) {
-          await c.addNewUser(userName: c.userName);
-          await Get.offAllNamed(ControlView.routeName, arguments: c.userName);
+          var res = await c.sendUserName(userName: c.userName);
+          if (res != null) {
+            await Get.toNamed(VerificationView.routeName, arguments: res);
+          }
+          showSnackBarRed();
         }
       },
       color: Colors.black,

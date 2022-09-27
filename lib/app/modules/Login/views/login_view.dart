@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:logger/logger.dart';
 import 'package:quiz_app/app/modules/Widgets/Common/SharedWidgets.dart';
 
 import '../../utili/Constants.dart';
@@ -27,21 +28,28 @@ class LoginView extends GetView<LoginController> {
                 FadeInDown(
                   child: const Text(
                     'مستخدم جديد',
-                    style: mainStyleTB,
+                    style: mainTitleBlack,
                   ),
                 ),
-                SharedWidgets().buildDesc("Enter your phone number to continue, we will send you OTP to verify."),
+                SharedWidgets().buildTextDown(
+                    // "Enter your phone number to continue, we will send you OTP to verify.", mainStyleLBB),
+                    "من فضلك أدخل رقم الجوال سنرسل لك كود التحقق.",
+                    mainStyleLBB),
                 SPACEV10,
                 SPACEV10,
                 SPACEV10,
-                _buildPhoneInput(c),
+                Obx(() {
+                  return _buildPhoneInput(c);
+                }),
                 SPACEV10,
                 SPACEV10,
                 SPACEV10,
                 // _buildNameInput(c),
                 SPACEV10,
                 SPACEV10,
-                _buildRequestBtn(c),
+                Obx(() {
+                  return _buildRequestBtn();
+                }),
                 SPACEV10,
                 _buildDontHaveAcount(c)
               ],
@@ -52,68 +60,16 @@ class LoginView extends GetView<LoginController> {
     );
   }
 
-  // Widget _buildNameInput(LoginController c) {
-  //   return Form(
-  //     key: c.formKey2,
-  //     child: TextFormField(
-  //       controller: c.nameController,
-  //       onChanged: (val) {
-  //         c.userName = val;
-  //       },
-  //       onSaved: (val) {
-  //         c.userName = val!;
-  //         // Logger().d(number);
-  //       },
-  //       validator: (val) {
-  //         return val!.isEmpty ? 'تحقق من الإسم ' : null;
-  //       },
-  //       cursorColor: Colors.black,
-  //       decoration: InputDecoration(
-  //         contentPadding: EdgeInsets.all(0.0),
-  //         labelText: 'الإسم',
-  //         hintText: 'Username',
-  //         labelStyle: TextStyle(
-  //           color: Colors.black,
-  //           fontSize: 14.0,
-  //           fontWeight: FontWeight.w400,
-  //         ),
-  //         hintStyle: TextStyle(
-  //           color: Colors.grey,
-  //           fontSize: 14.0,
-  //         ),
-  //         prefixIcon: Icon(
-  //           Icons.manage_accounts_outlined,
-  //           color: Colors.black,
-  //           size: 18,
-  //         ),
-  //         fillColor: Colors.white,
-  //         filled: true,
-  //         enabledBorder: OutlineInputBorder(
-  //           borderSide: BorderSide(color: Colors.grey.shade200, width: 2),
-  //           borderRadius: BorderRadius.circular(10.0),
-  //         ),
-  //         floatingLabelStyle: TextStyle(
-  //           color: Colors.black,
-  //           fontSize: 18.0,
-  //         ),
-  //         focusedBorder: OutlineInputBorder(
-  //           borderSide: BorderSide(color: Colors.black, width: 1.5),
-  //           borderRadius: BorderRadius.circular(10.0),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget _buildDontHaveAcount(LoginController c) {
     return FadeInDown(
       delay: const Duration(milliseconds: 800),
       child: Row(
+        textDirection: TextDirection.rtl,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Already have an account?',
-            style: TextStyle(color: Colors.grey.shade700),
+            'لديك حساب بالفعل',
+            style: mainStyleLBB,
           ),
           const SizedBox(
             width: 5,
@@ -123,8 +79,9 @@ class LoginView extends GetView<LoginController> {
               Get.toNamed(LoginView.routeName);
             },
             child: const Text(
-              'Login',
-              style: TextStyle(color: Colors.black),
+              textDirection: TextDirection.rtl,
+              'دخول',
+              style: mainStyleTMBU,
             ),
           )
         ],
@@ -132,37 +89,44 @@ class LoginView extends GetView<LoginController> {
     );
   }
 
-  Widget _buildRequestBtn(LoginController c) {
+  Widget _buildRequestBtn() {
+    var c = Get.put(LoginController());
+
     return FadeInDown(
       delay: const Duration(milliseconds: 600),
       child: MaterialButton(
         minWidth: double.infinity,
         onPressed: () async {
-          c.isLoading = false;
-
           var ok1 = c.formKey.currentState!.validate();
           // var ok2 = c.formKey2.currentState!.validate();
           if (ok1) {
-            c.loginUser(mobileNumber: c.number);
-            // Get.toNamed(VerificationView.routeName, arguments: c.number);
+            var isSent = await c.loginUser(mobileNumber: c.number.value);
+            Logger().d("isSent --- ${isSent}");
+
+            if (isSent) {
+              // Get.toNamed(VerificationView.routeName);
+            } else {
+              showSnackBarRed();
+            }
           }
         },
         color: Colors.black,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
         padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-        child: c.isLoading
+        child: c.loadingStatus.value == LoadingStatus.loading
             ? Container(
                 width: 20,
                 height: 20,
                 child: const CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                  color: Colors.black,
+                  backgroundColor: Colors.green,
+                  color: Colors.white,
                   strokeWidth: 2,
                 ),
               )
             : const Text(
-                "Request OTP",
-                style: TextStyle(color: Colors.white),
+                "طلب رمز OTP",
+                textDirection: TextDirection.rtl,
+                style: mainStyleLBW,
               ),
       ),
     );
@@ -194,8 +158,9 @@ class LoginView extends GetView<LoginController> {
               key: c.formKey,
               child: InternationalPhoneNumberInput(
                 errorMessage: "تأكد من الرقم/ الدولة",
+
                 textStyle: TextStyle(color: Colors.blue),
-                initialValue: c.number,
+                initialValue: c.number.value,
                 selectorConfig: const SelectorConfig(
                   selectorType: PhoneInputSelectorType.DIALOG,
                   // useEmoji: true,
@@ -210,39 +175,82 @@ class LoginView extends GetView<LoginController> {
                 keyboardType: const TextInputType.numberWithOptions(signed: true, decimal: true),
                 cursorColor: Colors.black,
 
-                inputDecoration: InputDecoration(
-                  contentPadding: const EdgeInsets.only(bottom: 15, left: 0),
+                inputDecoration: const InputDecoration(
+                  // contentPadding: const EdgeInsets.only(bottom: 15, left: 0),
                   border: InputBorder.none,
-                  hintText: 'Phone Number',
-                  hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 16),
+                  hintText: 'رقم الجوال',
+                  hintStyle: mainStyleLableSmall,
                 ),
                 onInputChanged: (PhoneNumber number) {
-                  c.number = number;
-                  // Logger().d(c.number);
+                  c.number.value = number;
+                  // Logger().d(c.number.value);
                 },
                 onInputValidated: (bool value) {
                   // Logger().d("$value");
                 },
                 onSaved: (PhoneNumber number) {
-                  c.number = number;
+                  c.number.value = number;
                   // Logger().d(number);
                 },
               ),
             ),
-
-            // Positioned(
-            //   left: 10,
-            //   top: 8,
-            //   bottom: 8,
-            //   child: Container(
-            //     height: 40,
-            //     width: 1,
-            //     color: Colors.black.withOpacity(0.13),
-            //   ),
-            // )
           ],
         ),
       ),
     );
   }
+
+// Widget _buildNameInput(LoginController c) {
+//   return Form(
+//     key: c.formKey2,
+//     child: TextFormField(
+//       controller: c.nameController,
+//       onChanged: (val) {
+//         c.userName = val;
+//       },
+//       onSaved: (val) {
+//         c.userName = val!;
+//         // Logger().d(number);
+//       },
+//       validator: (val) {
+//         return val!.isEmpty ? 'تحقق من الإسم ' : null;
+//       },
+//       cursorColor: Colors.black,
+//       decoration: InputDecoration(
+//         contentPadding: EdgeInsets.all(0.0),
+//         labelText: 'الإسم',
+//         hintText: 'Username',
+//         labelStyle: TextStyle(
+//           color: Colors.black,
+//           fontSize: 14.0,
+//           fontWeight: FontWeight.w400,
+//         ),
+//         hintStyle: TextStyle(
+//           color: Colors.grey,
+//           fontSize: 14.0,
+//         ),
+//         prefixIcon: Icon(
+//           Icons.manage_accounts_outlined,
+//           color: Colors.black,
+//           size: 18,
+//         ),
+//         fillColor: Colors.white,
+//         filled: true,
+//         enabledBorder: OutlineInputBorder(
+//           borderSide: BorderSide(color: Colors.grey.shade200, width: 2),
+//           borderRadius: BorderRadius.circular(10.0),
+//         ),
+//         floatingLabelStyle: TextStyle(
+//           color: Colors.black,
+//           fontSize: 18.0,
+//         ),
+//         focusedBorder: OutlineInputBorder(
+//           borderSide: BorderSide(color: Colors.black, width: 1.5),
+//           borderRadius: BorderRadius.circular(10.0),
+//         ),
+//       ),
+//     ),
+//   );
+// }
+
 }

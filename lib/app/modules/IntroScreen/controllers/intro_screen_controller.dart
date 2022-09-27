@@ -1,16 +1,15 @@
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-
-import '../../../data/services/AuthService.dart';
+import 'package:quiz_app/app/data/local/LocalStorage.dart';
 
 class IntroScreenController extends GetxController {
-  AuthService _authService = AuthService();
+  // AuthService _authService = AuthService();
   var isLogged = false.obs;
 
   Future<void> init() async {
-    isLogged.value = await _authService.isLogged();
+    isLogged.value = LocalStorage().isTokenHere();
     Logger().d("isLogged = ${isLogged.value}");
-    await Future.delayed(Duration(seconds: 4));
+    await Future.delayed(Duration(seconds: 0));
   }
 
   @override

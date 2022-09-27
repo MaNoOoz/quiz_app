@@ -2,7 +2,6 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_verification_code/flutter_verification_code.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 import '../../Widgets/Common/SharedWidgets.dart';
 import '../../utili/Constants.dart';
@@ -38,7 +37,7 @@ class VerificationView extends GetView<VerificationController> {
                       duration: const Duration(milliseconds: 500),
                       child: const Text(
                         "التحقق",
-                        style: mainStyleTB,
+                        style: mainTitleBlack,
                       )),
                   SPACEV10,
                   // SharedWidgets().buildDesc("Your code was sent to \n ${phoneNumber.phoneNumber}"),
@@ -46,55 +45,43 @@ class VerificationView extends GetView<VerificationController> {
                   _buildInputCode(c),
                   SPACEV10,
                   _buildFooter(c),
+
+                  Obx(() {
+                    return _buildVerifyBtn(c);
+                  }),
                   SPACEV10,
-                  // user.name == null
-                  //     ? Container(
-                  //         child: tf.value,
-                  //       )
-                  //     : Container(),
+
                   SPACEV10,
-                  _buildVerifyBtn(c),
+
+                  // _buildVerifyBtn(c),
                 ],
               )),
         ));
   }
 
+  bool mValidator(String input) {
+    return input.length < 4 ? true : false;
+  }
+
   Widget _buildVerifyBtn(VerificationController c) {
-    return FadeInDown(
+    var btn = FadeInDown(
       delay: const Duration(milliseconds: 800),
       duration: const Duration(milliseconds: 500),
       child: MaterialButton(
         elevation: 0,
-        onPressed: c.code.value.length < 4
-            ? () => {Logger().d("تأكد من الكود المدخل")}
-            : () async {
-                await c.checkToken(c);
-              },
+        onPressed: () async {
+          mValidator(c.code.value) ? showSnackBarError() : await c.checkToken(c);
+        },
         color: Colors.black,
         minWidth: Get.width * 0.8,
         height: 50,
-        child: c.isLoading
-            ? Container(
-                width: 20,
-                height: 20,
-                child: const CircularProgressIndicator(
-                  backgroundColor: Colors.white,
-                  strokeWidth: 3,
-                  color: Colors.black,
-                ),
-              )
-            : c.isVerified
-                ? const Icon(
-                    Icons.check_circle,
-                    color: Colors.white,
-                    size: 30,
-                  )
-                : const Text(
-                    "Verify",
-                    style: TextStyle(color: Colors.white),
-                  ),
+        child: Text(
+          "تحقق",
+          style: mainStyleLBW,
+        ),
       ),
-    );
+    ).obs;
+    return btn.value;
   }
 
   Widget _buildFooter(VerificationController c) {
@@ -105,17 +92,14 @@ class VerificationView extends GetView<VerificationController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Didn't received the OTP?",
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            "لم يصلك الكود ؟ ",
+            style: mainStyleLBB,
           ),
           TextButton(
-              onPressed: () {
-                // if (_isResendAgain) return;
-                // resend();
-              },
+              onPressed: () {},
               child: Text(
-                c.isResendAgain ? "Try again in " + c.start.toString() : "Resend",
-                style: const TextStyle(color: Colors.blueAccent),
+                "إعادة إرسال",
+                style: mainStyleLBb,
               ))
         ],
       ),
@@ -143,10 +127,10 @@ class VerificationView extends GetView<VerificationController> {
 
   Widget _buildInputTest(VerificationController c) {
     var tf = TextFormField(
-      style: mainStyleLB,
+      style: mainStyleLBB,
       decoration: InputDecoration(
         label: const Text("إدخل إسمك من فضلك "),
-        hintStyle: mainStyleLB,
+        hintStyle: mainStyleLBB,
         border: OutlineInputBorder(
           borderSide: Divider.createBorderSide(
             Get.context,

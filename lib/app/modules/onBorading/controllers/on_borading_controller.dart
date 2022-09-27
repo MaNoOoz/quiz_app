@@ -1,8 +1,6 @@
 import 'package:get/get.dart';
 
 class OnBoradingController extends GetxController {
-  //TODO: Implement OnBoradingController
-
   final count = 0.obs;
   @override
   void onInit() {

@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
 
-import '../../../data/provider/ApiProvider.dart';
-import '../../utili/Constants.dart';
+import '../../modules/utili/Constants.dart';
+import '../provider/ApiProvider.dart';
 
 class ProfileService {
   Future<dynamic> getUserInfo() async {

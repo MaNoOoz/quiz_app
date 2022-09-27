@@ -1,7 +1,9 @@
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:quiz_app/app/data/local/LocalStorage.dart';
+import 'package:quiz_app/app/data/models/GameModel.dart';
 
+import '../../IntroScreen/views/intro_screen_view.dart';
 import '../service/ProfileService.dart';
 
 class ProfileController extends GetxController {
@@ -10,23 +12,19 @@ class ProfileController extends GetxController {
   var name = "".obs;
   var mobile = "".obs;
 
-  var listOfScores = [
-    1,
-    5,
-    5,
-    5,
-  ].obs;
+  var userScoresList = <GameModel>[].obs;
+
+  var isLogged = true.obs;
+  var isPlayed = true.obs;
+
+  // fake
+  // final List<GameModel> listFromLocal = [GameModel(1, score: 1, userName: "userName", numberOfGames: 1)];
 
   Future<void> getUsersData() async {
     try {
-      var a = await profileService.getUserInfo();
-      // ProfileResponseModel user = await profileService.getUserInfo();
-      // name.value = user.name!;
-      // mobile.value = user.mobile!;
-      // Logger().d(user.name);
-      // Logger().d(user.mobile);
-      var _name = a['name'];
-      var _mobile = a['mobile'];
+      var user = await profileService.getUserInfo();
+      var _name = user['name'];
+      var _mobile = user['mobile'];
       name.value = _name;
       mobile.value = _mobile.toString();
       update();
@@ -36,20 +34,35 @@ class ProfileController extends GetxController {
     }
   }
 
-  Future<void> getUsersScores() async {
+  Future<bool> getUsersScores() async {
     try {
-      await storage.saveData(key: USER_SCORES, value: listOfScores);
+      final dataFromLocalString = storage.read(key: USER_GAMES);
+      final List<GameModel> listFromLocal = GameModel.decode(dataFromLocalString);
 
-      // String score = await storage.readProfileData(key: USER_SCORES);
-      // listOfScores.add(int.parse(score));
-      // Logger().d("${score}");
+      Logger().d("listFromLocal : ${listFromLocal.length}");
+      userScoresList.assignAll(listFromLocal);
+      Logger().d("userScoresList : ${userScoresList.length}");
 
-      // listOfScores.add(int.parse(score));
-      // Logger().d(score);
-      // Logger().d("${score.runtimeType}");
-      Logger().d("${listOfScores.runtimeType}");
+      if (dataFromLocalString != null) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (e) {
       Logger().d(e);
+    }
+    return false;
+  }
+
+  logOUt() async {
+    Logger().d("logOUt : ${isLogged.value}");
+
+    isLogged.value = LocalStorage().isTokenHere();
+    if (isLogged.value) {
+      await LocalStorage().remove(key: TOKEN);
+      Get.offAll(() => const IntroScreenView());
+    } else {
+      Get.offAll(() => const IntroScreenView());
     }
   }
 
@@ -62,7 +75,7 @@ class ProfileController extends GetxController {
   void onReady() async {
     super.onReady();
     await getUsersData();
-    await getUsersScores();
+    isPlayed.value = await getUsersScores();
   }
 
   @override

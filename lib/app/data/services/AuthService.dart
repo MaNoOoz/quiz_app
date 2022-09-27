@@ -6,19 +6,20 @@ import 'package:logger/logger.dart';
 
 import '../../modules/utili/Constants.dart';
 import '../local/LocalStorage.dart';
+import '../provider/ApiProvider.dart';
 
 class AuthService {
-  static LocalStorage storage = LocalStorage();
+  LocalStorage storage = LocalStorage();
 
   Future<bool> isLogged() async {
-    var logged = await storage.IsTokenHere();
+    var logged = storage.isTokenHere();
     if (logged) {
       return true;
     }
     return false;
   }
 
-  Future<bool> ValidToken() async {
+  Future<bool> isValidToken() async {
     Logger().d("ValidToken Called");
 
     // var userToken = await getUserToken();
@@ -27,7 +28,7 @@ class AuthService {
 
       var url = "$BASE_URL$endPoint";
 
-      var response = await http.get(Uri.parse(url), headers: headers);
+      var response = await http.get(Uri.parse(url), headers: ApiProvider().buildHeaders());
 
       var data = jsonDecode(response.body);
 
@@ -46,11 +47,15 @@ class AuthService {
     return false;
   }
 
-  Future<String?> getUserToken() async {
-    var logged = await storage.readToken(key: TOKEN);
-    if (logged != null) {
-      return logged;
+  Future<dynamic> isValidToken2() async {
+    try {
+      var endPoint = "Token";
+      ApiProvider api = ApiProvider();
+      var res = await api.get(endPoint);
+      Logger().d(res);
+      return res;
+    } on HttpException catch (_, e) {
+      Logger().d("$_ $e");
     }
-    return "";
   }
 }

@@ -10,8 +10,7 @@ dependencies:
 #  data
   get: 4.6.5
   get_storage:
-  hive: ^2.2.3
-  hive_flutter:
+
   double_back_to_close_app:
   logger:
   intl_phone_number_input: ^0.7.0+2
@@ -19,6 +18,13 @@ dependencies:
   share_plus:
   animate_do: ^2.1.0
   flutter_gradient_colors:
+  auto_size_text:
+  animated_text_kit:
+  circular_countdown_timer:
+  slide_countdown:
+  feather_icons:
+  flutter_spinkit:
+
 #  network
   http:
 
@@ -27,7 +33,6 @@ dependencies:
 
 dev_dependencies: 
   flutter_lints: ^2.0.0
-  hive_generator:
   flutter_test:
     sdk: flutter
 

@@ -11,23 +11,6 @@ class IntroScreenView extends GetView<IntroScreenController> {
     return Scaffold(body: Center(child: Text('Error: ${snapshot.error}')));
   }
 
-  Widget waitingView() {
-    return Scaffold(
-        body: Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: CircularProgressIndicator(),
-          ),
-          Text('Loading...'),
-        ],
-      ),
-    ));
-  }
-
   @override
   Widget build(BuildContext context) {
     var c = Get.put(IntroScreenController());
@@ -38,7 +21,7 @@ class IntroScreenView extends GetView<IntroScreenController> {
             future: c.init(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return waitingView();
+                return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return errorView(snapshot);
               } else {
@@ -48,4 +31,24 @@ class IntroScreenView extends GetView<IntroScreenController> {
       },
     );
   }
+
+  // Widget buildLoading() {
+  //   return SafeArea(
+  //     child: Material(
+  //       child: Scaffold(
+  //           body: Container(
+  //               color: Colors.black,
+  //               child: Column(
+  //                 children: [
+  //                   SPACEV10,
+  //                   SPACEV10,
+  //                   SharedWidgets().buildLogo(),
+  //                   SPACEV10,
+  //                   SPACEV10,
+  //                   // Center(child: SharedWidgets().buildLoading()),
+  //                 ],
+  //               ))),
+  //     ),
+  //   );
+  // }
 }

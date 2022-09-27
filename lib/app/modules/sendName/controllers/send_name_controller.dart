@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
+import 'package:quiz_app/app/data/local/LocalStorage.dart';
 
 import '../../utili/Constants.dart';
 
@@ -24,17 +25,19 @@ class SendNameController extends GetxController {
 
   var isLoading = false;
 
-  Future<void> addNewUser({required String userName}) async {
+  Future<dynamic> sendUserName({required String userName}) async {
+    var headerToken = LocalStorage().read(key: TOKEN);
+    Logger().d("headerToken : $headerToken");
+
     var endpoint = "Name";
     // var BASE_URL = "https://quizu.okoul.com/";
-    var mainToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiaWF0IjoxNjYzMzU4NDY1fQ.LlVAcArd2Bn3gtdanoHlfMOsHn0gRMqvVHozUk4bjWM";
+    // var mainToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwiaWF0IjoxNjYzMzU4NDY1fQ.LlVAcArd2Bn3gtdanoHlfMOsHn0gRMqvVHozUk4bjWM";
 
     var headers = {
       'Content-Type': 'application/json',
       "Accept": "application/json",
       "Access-Control_Allow_Origin": "*",
-      "Authorization": "Bearer $mainToken",
+      "Authorization": "Bearer $headerToken",
     };
 
     var url = "$BASE_URL$endpoint";

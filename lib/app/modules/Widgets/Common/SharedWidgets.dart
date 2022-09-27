@@ -1,18 +1,29 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
+import 'package:quiz_app/app/modules/utili/Constants.dart';
 
 class SharedWidgets {
-  Widget buildLogo() {
+  Widget buildLogo({double? size}) {
     return FadeInDown(
       child: Image.asset(
         'assets/images/ideas.png',
         fit: BoxFit.cover,
-        width: 280,
+        width: size ?? 150,
       ),
     );
   }
 
-  Widget buildCustomAppbar({required VoidCallback onPressed}) {
+  Widget buildLoading() {
+    return SpinKitRotatingCircle(
+      color: Colors.white,
+      size: 50.0,
+    );
+  }
+
+  Widget buildCustomAppbar({required VoidCallback? onPressed}) {
     return FadeInDown(
       child: Container(
         height: 60,
@@ -25,6 +36,20 @@ class SharedWidgets {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildIconWithText({required Icon icon, required text, required VoidCallback? onPressed}) {
+    return FadeInDown(
+      child: Row(
+        children: [
+          IconButton(onPressed: onPressed, icon: icon),
+          const SizedBox(
+            width: 4,
+          ),
+          Text(text)
+        ],
       ),
     );
   }
@@ -54,45 +79,57 @@ class SharedWidgets {
     );
   }
 
-  Widget buildTextLeft(text, style) {
+  Widget buildTextLeft(String? text, style, {align}) {
+    // text = null;
     return FadeInLeft(
       delay: const Duration(milliseconds: 600),
-      child: Text(
-        "$text",
-        style: style,
-        textAlign: TextAlign.center,
-      ),
+      child: text == null
+          ? Text(
+              "بك",
+              style: style,
+            )
+          : Text(
+              "$text",
+              style: style,
+              textAlign: align ?? TextAlign.center,
+            ),
     );
   }
 
-  Widget buildTextRight(text, style) {
+  Widget buildTextRight(text, style, {align}) {
     return FadeInRight(
       delay: const Duration(milliseconds: 600),
-      child: Text(
+      child: AutoSizeText(
         "$text",
+        minFontSize: 16.0,
+        maxFontSize: 40.0,
         style: style,
         textAlign: TextAlign.center,
       ),
     );
   }
 
-  Widget buildTextTop(text, style) {
+  Widget buildTextTop(text, style, {align}) {
     return FadeInUp(
       delay: const Duration(milliseconds: 600),
-      child: Text(
+      child: AutoSizeText(
         "$text",
+        minFontSize: 16.0,
+        maxFontSize: 40.0,
         style: style,
         textAlign: TextAlign.center,
       ),
     );
   }
 
-  Widget buildTextDown(text, style) {
+  Widget buildTextDown(text, style, {align}) {
     return FadeInDown(
       delay: const Duration(milliseconds: 600),
-      child: Text(
+      child: AutoSizeText(
         "$text",
         style: style,
+        minFontSize: 16.0,
+        maxFontSize: 40.0,
         textAlign: TextAlign.center,
       ),
     );
@@ -120,19 +157,58 @@ class SharedWidgets {
     );
   }
 
-  Widget buildRequestBtn(text, style, {required VoidCallback onPressed}) {
+  Widget buildRequestBtn(text, style, {required VoidCallback? onPressed}) {
+    return SizedBox(
+      height: 80,
+      width: Get.width * 0.8,
+      child: FadeInDown(
+        delay: const Duration(milliseconds: 600),
+        child: MaterialButton(
+          minWidth: Get.width / 5,
+          onPressed: onPressed,
+          disabledColor: Colors.grey,
+          color: Colors.black,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+          child: Text(
+            "$text",
+            style: style,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildRequestBtnWithLoading(text, style,
+      {required VoidCallback? onPressed, required bool isLoading, required bool isVerified}) {
     return FadeInDown(
       delay: const Duration(milliseconds: 600),
       child: MaterialButton(
-        minWidth: double.infinity,
+        elevation: 0,
         onPressed: onPressed,
         color: Colors.black,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-        child: Text(
-          "$text",
-          style: style,
-        ),
+        minWidth: Get.width * 0.8,
+        height: 50,
+        child: isLoading
+            ? Container(
+                width: 20,
+                height: 20,
+                child: const CircularProgressIndicator(
+                  backgroundColor: Colors.white,
+                  strokeWidth: 3,
+                  color: Colors.black,
+                ),
+              )
+            : isVerified
+                ? const Icon(
+                    Icons.check_circle,
+                    color: Colors.white,
+                    size: 30,
+                  )
+                : Text(
+                    text,
+                    style: mainStyleLW,
+                  ),
       ),
     );
   }

@@ -1,10 +1,8 @@
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
-import '../services/LeaderboardService.dart';
+import '../../../data/services/LeaderboardService.dart';
 
 class LeaderboardController extends GetxController {
-  //TODO: Implement LeaderboardController
   var leaderService = LeaderboardService();
   List<dynamic> listOfUsers = <dynamic>[].obs;
 
@@ -30,7 +28,7 @@ class LeaderboardController extends GetxController {
   Future<void> getTopUsersData() async {
     try {
       var l = await leaderService.getTopUsers();
-      Logger().d(l);
+      // Logger().d(l);
 
       var list = l!.toList();
       listOfUsers.assignAll(list);

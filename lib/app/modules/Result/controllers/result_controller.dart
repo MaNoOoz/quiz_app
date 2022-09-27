@@ -1,7 +1,21 @@
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+
+import '../../../data/local/LocalStorage.dart';
+import '../../../data/models/GameModel.dart';
 
 class ResultController extends GetxController {
-  //TODO: Implement ResultController
+  List<GameModel> gamesList = [];
+
+  // save  Game Session to local storage
+  Future<void> saveUserGame(Rx<GameModel> gameSession) async {}
+
+  Future readUserGame(Rx<GameModel> gameSession) async {
+    var ss = await LocalStorage().read(
+      key: USER_GAMES,
+    );
+    Logger().d("readUserGame : $ss");
+  }
 
   final count = 0.obs;
   @override

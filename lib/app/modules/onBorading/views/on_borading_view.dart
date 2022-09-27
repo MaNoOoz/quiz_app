@@ -12,9 +12,9 @@ class OnBoradingView extends GetView<OnBoradingController> {
   @override
   Widget build(BuildContext context) {
     var c = Get.put(IntroScreenController());
-
+    // return ControlView();
     return Obx(() {
-      return c.isLogged.value ? ControlView() : LoginView(); // TODO: 1
+      return c.isLogged.value == false ? const LoginView() : const ControlView(); // TODO: 1
     });
   }
 }

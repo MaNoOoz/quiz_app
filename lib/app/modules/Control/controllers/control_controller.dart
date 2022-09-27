@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 class ControlController extends GetxController {
   final _currentIndex = 0.obs;
@@ -9,7 +8,7 @@ class ControlController extends GetxController {
   get currentIndex => _currentIndex.value;
 
   void changePage(int index) {
-    Logger().d('$index');
+    // Logger().d('$index');
     _currentIndex.value = index;
   }
 

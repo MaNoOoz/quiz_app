@@ -1,28 +1,37 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:quiz_app/app/data/local/LocalStorage.dart';
+import 'package:quiz_app/app/data/app_controller/AppController.dart';
+import 'package:quiz_app/app/data/models/GameModel.dart';
 import 'package:quiz_app/app/modules/Quiz/models/QuestionModel.dart';
-import 'package:quiz_app/app/modules/Result/views/result_view.dart';
 
-import '../services/QuizService.dart';
+import '../../../data/services/QuizService.dart';
+import '../../Result/views/result_view.dart';
+import '../../utili/Constants.dart';
 
 class QuizController extends GetxController {
-  var firstPressSkip = false.obs;
-  final questionIndex = 0.obs;
+  final loadingStatus = LoadingStatus.completed.obs;
 
+  // Page Control ----------------------------------------------------
+  var firstPressSkip = true.obs;
+  final questionIndex = 0.obs;
   final page = 0.obs;
   var pageController = PageController(initialPage: 0).obs;
 
-  onPageChanged(input) {
-    page.value = input;
+  onPageChanged(int val) {
+    page.value = val;
+    questionIndex.value = val;
+
+    Logger().e(page.value.toString());
+    // Logger().e(controller.questionIndex.toString());
+    // Logger().e(controller.isFirstPage.toString());
+    // Logger().e(controller.totalScore.toString());
   }
 
-  resetController(int page) {
+  resetPageController(int page) {
     pageController.value = PageController(initialPage: page);
   }
 
@@ -31,22 +40,28 @@ class QuizController extends GetxController {
   }
 
   bool get isLastPage {
-    return page.value == listOfQuestions.length - 1;
+    return page.value == allQuestions.length - 1;
   }
 
-  Rxn<QuestionModel> currentQuestion = Rxn<QuestionModel>();
+  // ----------------------------------------------------
 
   /// Data ===================================================================================================
+  Rxn<QuestionModel> currentQuestion = Rxn<QuestionModel>();
+  final allQuestions = <QuestionModel>[];
   QuizService quizService = QuizService();
-  LocalStorage storage = LocalStorage();
-  List<QuestionModel> listOfQuestions = <QuestionModel>[].obs;
+  bool get isFirstQuestion => questionIndex.value > 0;
+  bool get isLastQuestion => questionIndex.value >= allQuestions.length - 1;
 
+  // get all questions
   Future<void> getQuestionsList() async {
+    loadingStatus.value = LoadingStatus.loading;
     try {
-      var l = await quizService.getData();
-      var list = l!.map((dynamic element) => QuestionModel.fromJson(element)).toList();
-      listOfQuestions.assignAll(list);
+      var l2 = await quizService.getData2();
+      var list2 = l2!.map((dynamic element) => QuestionModel.fromJson(element)).toList();
+      allQuestions.assignAll(list2);
+      loadingStatus.value = LoadingStatus.completed;
     } catch (e) {
+      loadingStatus.value = LoadingStatus.error;
       Logger().d(e);
     }
   }
@@ -54,74 +69,43 @@ class QuizController extends GetxController {
   // Score & Game logic ===============================================================================================
 
   int _totalScore = 0;
+  int? selectedOption = -1;
 
   int get totalScore => _totalScore;
+  late Rx<GameModel> gameSession;
   List<Icon> iconsScoreList = [];
-  List<String> ScoreList = ["55", "66"];
-
-  readScoreFromLocal() async {
-    Logger().d('readList $readScoreFromLocal');
-    return storage.readScore(key: USER_SCORES2);
-  }
-
-  saveScoresToLocalStorage() async {
-    Logger().d('saveScoresToLocalStorage $saveScoresToLocalStorage');
-    final testList = await storage.saveScore(storageKey: USER_SCORES2, storageValue: ScoreList);
-
-    /// getting all saved data
-    final oldSavedData = await storage.readScore(key: USER_SCORES2);
-    Logger().d('oldSavedData $oldSavedData');
-
-    /// in case there is saved data
-    if (oldSavedData != null) {
-      /// create a holder list for the old data
-      List<dynamic> oldSavedList = jsonDecode(oldSavedData);
-
-      /// append the new list to saved one
-      oldSavedList.addAll(ScoreList);
-
-      /// save the new collection
-      return storage.saveScore(storageKey: USER_SCORES, storageValue: oldSavedList);
-    } else {
-      /// in case of there is no saved data -- add the new list to storage
-      return storage.saveScore(storageKey: USER_SCORES, storageValue: ScoreList);
-    }
-  }
-
-  rightAnswers() {
-    var answeredScore = false;
-    iconsScoreList.add(answeredScore
-        ? Icon(
-            Icons.brightness_1,
-            color: Colors.green,
-          )
-        : Icon(Icons.brightness_1_outlined));
-  }
-
-  restScore() {
-    _totalScore = 0;
-    iconsScoreList = [];
-    // page.value = 0;
-    resetController(0);
-    restTimer();
-  }
 
   void resetAll() {
+    pageController.value = PageController(initialPage: 0);
+    pageController.value.dispose();
+    currentQuestion.value = allQuestions[0];
     questionIndex.value = 0;
-    currentQuestion.value = listOfQuestions[0];
-    // page.value = 0;
-    // pageController.jumpToPage(0);
+    currentQuestion.value = allQuestions[0];
+    if (_timer != null) _timer!.cancel();
   }
 
-  void nextQuestion() async {
-    Logger().d('nextQuestion $nextQuestion');
+  void nextQuestion() {
+    Logger().d('nextQuestion ${questionIndex.value}');
+    nextPage();
 
-    if (page.value + 1 == listOfQuestions.length) {
-      Get.toNamed(ResultView.routeName, arguments: _totalScore); //
-    }
-    if (pageController.value.hasClients) {
+    if (questionIndex.value >= allQuestions.length - 1) return;
+    questionIndex.value++;
+    // page.value++;
+    currentQuestion.value = allQuestions[questionIndex.value];
+    // page.value = allQuestions.indexOf(currentQuestion.value);
+  }
+
+  nextPage() {
+    Logger().d('nextQuestion $nextQuestion');
+    if (page.value >= allQuestions.length - 1) {
+      Get.toNamed(ResultView.routeName, arguments: gameSession); //
+
+    } else {
       pageController.value.nextPage(duration: const Duration(seconds: 1), curve: Curves.easeOut);
     }
+
+    // if (pageController.value.hasClients) {
+    // }
   }
 
   checkAnswerIfRight({required String inputValue, required QuestionModel model}) {
@@ -129,22 +113,28 @@ class QuizController extends GetxController {
     // int questionNumber = 0;
 
     Map map = model.toJson();
-    Logger().d('$map');
+    // Logger().d('$map');
 
     // bring the key for correct answer:
     var answer = map['correct'];
     // var chosenAnswer = map['correct'];
-    Logger().d('$answer');
+    // Logger().d('$answer');
     var chosenAnswer = map.keys.firstWhere((k) => map[k] == inputValue, orElse: () => "WTF");
-    // map.forEach((k, v) => print('${k}: ${v}'));
 
-    Logger().d('chosenAnswer $chosenAnswer');
-    // Logger().e('current score $_totalScore');
+    // Logger().d('chosenAnswer $chosenAnswer');
 
     if (chosenAnswer == answer) {
       // add to score
       _totalScore++;
-      Logger().e('current score $_totalScore');
+      // add score to object
+      gameSession.update((val) {
+        val?.score = _totalScore;
+        val?.numberOfGames = AppController().gamesCounter();
+      });
+
+      // Logger().e('current score $_totalScore');
+      // Logger().e('gameObject score${gameSession.value.score}');
+      // Logger().e('gameObject numberOfGames ${gameSession.value.numberOfGames}');
 
       nextQuestion();
     } else {
@@ -153,102 +143,69 @@ class QuizController extends GetxController {
   }
 
   /// timer ==========================================================================
-  var maxSeconds = const Duration(seconds: 120);
-  final time = '00:00'.obs;
+  static const maxSeconds = 120;
+  var seconds = maxSeconds.obs;
   Timer? _timer;
-  int remainSeconds = 1;
-  var isRunning = false;
 
-  _startQuiz() {
-    _startTimer();
-  }
-
-  void restTimer() => remainSeconds = maxSeconds.inSeconds;
-
-  stopTimer({bool reset = true}) {
-    _timer?.cancel();
-  }
-
-  pauseTimer() {
-    isRunning = _timer == null ? false : _timer!.isActive;
-    stopTimer();
+  void startTimer({bool rest = true}) {
+    if (rest) {
+      resetTimer();
+      // update();
+    }
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (seconds.value > 0) {
+        seconds.value--;
+        // update();
+      } else if (seconds.value == 0) {
+        showEndTimeDialog();
+        stopTimer(rest: false);
+        resetTimer();
+      }
+    });
   }
 
   /// is Timer Completed?
   bool isCompleted() {
-    var finished = int.parse(time.value) == maxSeconds.inSeconds || int.parse(time.value) == 0;
-    Logger().d('finished $finished');
-
-    return finished;
+    return seconds.value == maxSeconds || seconds.value == 0;
   }
 
-  String towDigits(int num) {
-    return num.toString().padLeft(2, '0');
-  }
-
-  String formatedTime({required input}) {
-    final minutes = towDigits(maxSeconds.inMinutes.remainder(60));
-    final seconds = towDigits(maxSeconds.inSeconds.remainder(60));
-    time.value = input.toString();
-    return time.value = "$minutes:$seconds";
-  }
-
-  void _startTimer({bool reset = true}) {
-    const duration = Duration(seconds: 1);
-
-    if (reset) {
-      restTimer();
+  /// Stop Timer
+  void stopTimer({bool rest = true}) {
+    if (rest) {
+      resetTimer();
+      // update();
     }
-    remainSeconds = maxSeconds.inSeconds;
-    _timer = Timer.periodic(
-      duration,
-      (Timer timer) {
-        if (remainSeconds == 0) {
-          showEndTimeDialog();
-          stopTimer(reset: false);
-        } else {
-          remainSeconds--;
-          formatedTime(input: remainSeconds);
-        }
-      },
-    );
+    _timer?.cancel();
+    // update();
   }
 
-  /// Dialogs ==========================================================================
-
-  showTryAgainDialog() {
-    Get.defaultDialog(
-      title: "Try Again",
-    );
+  /// Reset Timer
+  void resetTimer() {
+    seconds.value = maxSeconds;
+    // update();
   }
 
-  showEndTimeDialog() {
-    Get.defaultDialog(
-      title: "Time is Over",
-    );
-  }
+  var stream = Duration(seconds: 3).obs;
 
   // Life Cycle =====================================================================================
+
   @override
   void onInit() async {
     super.onInit();
-    _startQuiz();
+    await getQuestionsList();
+    resetAll();
   }
 
   @override
   void onReady() async {
     super.onReady();
-    await getQuestionsList();
+    // timer
+    startTimer(rest: false);
   }
 
   @override
   void onClose() {
     super.onClose();
-    if (_timer != null) {
-      _timer!.cancel();
-    }
-    restScore();
     resetAll();
-    pageController.value.dispose();
   }
 }

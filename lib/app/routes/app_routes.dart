@@ -29,4 +29,5 @@ abstract class _Paths {
   static const SEND_NAME = '/send';
   static const QUIZ = '/quiz';
   static const RESULT = '/result';
+  static const ASD = '/asd'; // asd page
 }
