@@ -44,8 +44,8 @@ class QuizController extends GetxController {
   // Score & Game logic ===============================================================================================
   int _totalScore = 0;
   int get totalScore => _totalScore;
-  // double _numberOfQuestion = 1;
-  // double get numberOfQuestion => _numberOfQuestion;
+  double _numberOfQuestion = 1;
+  double get numberOfQuestion => _numberOfQuestion;
 
   void nextQuestion() {
     Logger().e('nextQuestion ${questionIndex.value}');
@@ -67,7 +67,7 @@ class QuizController extends GetxController {
     } else {
       pageController.value.nextPage(duration: const Duration(seconds: 1), curve: Curves.easeOut);
     }
-    // _numberOfQuestion = pageController.value.page! + 2;
+    _numberOfQuestion = pageController.value.page! + 2;
   }
 
   checkAnswerIfRight({required String inputValue, required QuestionModel model}) {

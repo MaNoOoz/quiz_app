@@ -31,9 +31,9 @@ class LeaderboardView extends GetView<LeaderboardController> {
                   color: Colors.white,
                   // height: 400,
                   child: Obx(() {
-                    var q = Expanded(
+                    return Expanded(
                       child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: c.allUsers.length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, int index) {
@@ -41,8 +41,7 @@ class LeaderboardView extends GetView<LeaderboardController> {
                           return _buildItem(model: model, index: index);
                         },
                       ),
-                    ).obs;
-                    return q.value;
+                    );
                   }),
                 ),
               ],
