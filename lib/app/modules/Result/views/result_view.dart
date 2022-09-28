@@ -35,7 +35,7 @@ class ResultView extends GetView<ResultController> {
                     ScoreModel scoreModel =
                         ScoreModel(score: score.toString(), dateOfGame: DateTime.now().toIso8601String().toString());
                     c.scoreList3.add(scoreModel);
-                    // await c.sendScore(score: score.toString()); todo:
+                    await c.sendScore(score: score.toString());
                     await c.saveScore(list: c.scoreList3);
 
                     Get.offNamed(ControlView.routeName);
