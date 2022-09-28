@@ -5,7 +5,6 @@ class LeaderboardService {
     var endPoint = "TopScores";
     ApiProvider api = ApiProvider();
     var res = await api.get(endPoint);
-    //;
     return res;
   }
 }

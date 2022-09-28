@@ -21,11 +21,6 @@ class LocalStorage {
     _storage.writeIfNull(key, value);
   }
 
-  saveReadScore() {
-    final _downloads = ReadWriteValue(SCORES, List<Map<String, String>>.empty(growable: true), () => _storage);
-    return _downloads;
-  }
-
   // save token to local storage
   saveData({required key, required value}) async {
     await _storage.write(key, value);

@@ -19,7 +19,7 @@ class ResultController extends GetxController {
 
   Future saveScore({required List<ScoreModel> list}) async {
     try {
-      holderList();
+      // holderList();
 
       /// getting all saved data
       final oldSavedData = LocalStorage().read(key: USER_GAMES);
@@ -28,6 +28,7 @@ class ResultController extends GetxController {
         if (oldSavedData != null) {
           /// create a holder list for the old data
           final List<ScoreModel> listFromLocal = ScoreModel.decode(oldSavedData);
+          Logger().d("listFromLocal : ${listFromLocal.runtimeType}");
 
           // List<dynamic> oldSavedList = jsonDecode(oldSavedData);
 
@@ -36,15 +37,17 @@ class ResultController extends GetxController {
 
           /// save the new collection
           final String encodedData = ScoreModel.encode(listFromLocal);
-          LocalStorage().saveData(key: USER_GAMES, value: encodedData);
+          return LocalStorage().saveData(key: USER_GAMES, value: encodedData);
 
           Logger().d("listFromLocal : ${listFromLocal.length}");
         } else {
           /// in case of there is no saved data -- add the new list to storage
-          LocalStorage().saveData(key: USER_GAMES, value: list);
+          final String encodedData = ScoreModel.encode(list);
+          return LocalStorage().saveData(key: USER_GAMES, value: encodedData);
         }
       } else {
         Logger().d("خطا في الداتا ستوريج : ${list.length}");
+        holderList();
       }
 
       Logger().d("userGamesList : ${list.length}");
@@ -52,6 +55,31 @@ class ResultController extends GetxController {
       Logger().e("Error: ${e}");
     }
   }
+
+  // Future saveScore({required List<ScoreModel> list}) async {
+  //   /// getting all saved data
+  //   final oldSavedData = LocalStorage().read(key: USER_GAMES);
+  //
+  //   /// in case there is saved data
+  //   if (oldSavedData != null) {
+  //     /// create a holder list for the old data
+  //     final List<ScoreModel> listFromLocal = ScoreModel.decode(oldSavedData);
+  //
+  //     // List<dynamic> oldSavedList = jsonDecode(oldSavedData);
+  //
+  //     /// append the new list to saved one
+  //     listFromLocal.addAll(list);
+  //
+  //     /// save the new collection
+  //     final String encodedData = ScoreModel.encode(listFromLocal);
+  //     return LocalStorage().saveData(key: USER_GAMES, value: encodedData);
+  //
+  //     Logger().d("listFromLocal : ${listFromLocal.length}");
+  //   } else {
+  //     /// in case of there is no saved data -- add the new list to storage
+  //     return LocalStorage().saveData(key: USER_GAMES, value: list);
+  //   }
+  // }
 
   Future<dynamic> sendScore({required String score}) async {
     ApiProvider api = ApiProvider();

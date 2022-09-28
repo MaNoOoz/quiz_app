@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:quiz_app/app/data/models/ScoreModel.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -25,6 +26,7 @@ class ResultView extends GetView<ResultController> {
       child: SafeArea(
         child: Scaffold(
           body: Container(
+            color: Colors.white,
             padding: const EdgeInsets.all(30),
             child: Center(
               child: Column(
@@ -33,7 +35,7 @@ class ResultView extends GetView<ResultController> {
                     ScoreModel scoreModel =
                         ScoreModel(score: score.toString(), dateOfGame: DateTime.now().toIso8601String().toString());
                     c.scoreList3.add(scoreModel);
-                    await c.sendScore(score: score.toString());
+                    // await c.sendScore(score: score.toString()); todo:
                     await c.saveScore(list: c.scoreList3);
 
                     Get.offNamed(ControlView.routeName);
@@ -41,7 +43,8 @@ class ResultView extends GetView<ResultController> {
                   SPACEV10,
                   SPACEV10,
                   SPACEV10,
-                  SharedWidgets().buildLogo(),
+                  // SharedWidgets().buildLogo(),
+                  Container(color: Colors.red, child: Lottie.asset("assets/images/f.json")),
                   SharedWidgets().buildDesc("Congrats You Have Completed ${score} "
                       "\n correct answers"),
                   SharedWidgets().buildShareBtn("Share Your Score", mainStyleLW, onPressed: () async {

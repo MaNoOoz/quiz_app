@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:quiz_app/app/modules/Quiz/models/QuestionModel.dart';
+import 'package:quiz_app/app/data/models/QuestionModel.dart';
 
 import '../../../data/services/QuizService.dart';
 import '../../Result/views/result_view.dart';

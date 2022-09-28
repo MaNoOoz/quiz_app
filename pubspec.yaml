@@ -16,6 +16,7 @@ dependencies:
   intl_phone_number_input: ^0.7.0+2
   flutter_verification_code: ^1.1.5
   share_plus:
+  lottie:
   animate_do: ^2.1.0
   flutter_gradient_colors:
   auto_size_text:

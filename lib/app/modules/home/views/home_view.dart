@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:quiz_app/app/modules/utili/Constants.dart';
 
 import '../../../routes/app_pages.dart';
@@ -33,7 +34,8 @@ class HomeView extends GetView<HomeController> {
                       physics: const NeverScrollableScrollPhysics(),
                       children: [
                         SPACEV50,
-                        Align(alignment: AlignmentDirectional.topCenter, child: SharedWidgets().buildLogo()),
+                        Container(color: Colors.white, child: Lottie.asset("assets/images/quiz.json")),
+                        // Align(alignment: AlignmentDirectional.topCenter, child: SharedWidgets().buildLogo()),
                         SPACEV50,
                         Obx(() {
                           return Row(

@@ -1,6 +1,5 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gradient_colors/flutter_gradient_colors.dart';
 import 'package:get/get.dart';
 import 'package:quiz_app/app/data/models/ScoreModel.dart';
 
@@ -95,7 +94,7 @@ class ProfileView extends GetView<ProfileController> {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.green.shade200,
+      color: Colors.green.shade50,
       child: Container(
         padding: EdgeInsets.all(16),
         child: Row(
@@ -135,14 +134,16 @@ class ProfileView extends GetView<ProfileController> {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(11),
+            color: Colors.white54,
             border: Border.all(color: Colors.black.withOpacity(0.13)),
-            gradient: LinearGradient(
-              begin: Alignment.bottomCenter,
-              end: Alignment.topRight,
-              colors: GradientColors.white,
-              // stops: [0.6, 0.7],
-            ),
+            // gradient: LinearGradient(
+            //     begin: Alignment.bottomCenter,
+            //     end: Alignment.topRight,
+            //     colors: GradientColors.green,
+            //     tileMode: TileMode.clamp
+            //     // stops: [0.6, 0.7],
+            //     ),
           ),
           child: Row(
             children: [
@@ -153,11 +154,11 @@ class ProfileView extends GetView<ProfileController> {
                     ListTile(
                       contentPadding: EdgeInsets.all(8),
                       dense: true,
-                      title: Text(
-                        "${name}",
-                        style: mainStyleTMBL,
-                      ),
-                      subtitle: Row(
+                      // title: Text(
+                      //   "${name}",
+                      //   style: mainStyleTMBL,
+                      // ),
+                      title: Row(
                         children: [
                           Text(
                             "Score : ${model.score}",

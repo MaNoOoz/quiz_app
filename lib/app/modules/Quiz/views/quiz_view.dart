@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gradient_colors/flutter_gradient_colors.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:quiz_app/app/modules/Quiz/models/QuestionModel.dart';
+import 'package:quiz_app/app/data/models/QuestionModel.dart';
 import 'package:quiz_app/app/modules/Quiz/views/QItem.dart';
 import 'package:quiz_app/app/modules/utili/Constants.dart';
 
@@ -23,6 +23,7 @@ class QuizView extends GetView<QuizController> {
       onWillPop: () async {
         // await Get.off(() => const ControlView());
         c.pageController.value.jumpToPage(c.allQuestions.length);
+        Get.back();
         return false;
       },
       child: SafeArea(

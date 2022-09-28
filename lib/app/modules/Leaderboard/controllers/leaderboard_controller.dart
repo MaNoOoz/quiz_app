@@ -7,26 +7,8 @@ import '../../utili/Constants.dart';
 
 class LeaderboardController extends GetxController {
   final loadingStatus = LoadingStatus.completed.obs;
-
   var leaderService = LeaderboardService();
   List<UserModel> allUsers = <UserModel>[].obs;
-
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() async {
-    super.onReady();
-    await getTopUsers();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
 
   Future<void> getTopUsers() async {
     loadingStatus.value = LoadingStatus.loading;
@@ -39,5 +21,22 @@ class LeaderboardController extends GetxController {
       loadingStatus.value = LoadingStatus.error;
       Logger().e(e);
     }
+  }
+
+  @override
+  void onInit() async {
+    super.onInit();
+    await getTopUsers();
+  }
+
+  @override
+  void onReady() async {
+    super.onReady();
+    await getTopUsers();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
   }
 }

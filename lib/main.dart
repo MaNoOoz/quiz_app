@@ -7,9 +7,6 @@ import 'app/routes/app_pages.dart';
 
 void main() async {
   await GetStorage.init();
-  // LocalStorage().read(key: TOKEN);
-  // LocalStorage().remove(key: USER_INFO);
-  // LocalStorage().remove(key: TOKEN);
 
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

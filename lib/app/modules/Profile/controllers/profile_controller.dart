@@ -15,7 +15,7 @@ class ProfileController extends GetxController {
   var name = "".obs;
   var mobile = "".obs;
 
-  final userScoresList = <ScoreModel>[].obs;
+  var userScoresList = <ScoreModel>[].obs;
 
   var isLogged = true.obs;
 
@@ -29,10 +29,15 @@ class ProfileController extends GetxController {
   }
 
   getUserScores() {
-    final String dataFromLocalString = LocalStorage().read(key: USER_GAMES);
-    final List<ScoreModel> listFromLocal = ScoreModel.decode(dataFromLocalString);
-    userScoresList.addAll(listFromLocal);
-    userScoresList.refresh();
+    final dataFromLocalString = LocalStorage().read(key: USER_GAMES);
+    if (dataFromLocalString is String) {
+      final List<ScoreModel> listFromLocal = ScoreModel.decode(dataFromLocalString);
+      userScoresList.addAll(listFromLocal);
+      userScoresList.refresh();
+      return userScoresList;
+    } else {
+      return [];
+    }
   }
 
   logOUt() async {
