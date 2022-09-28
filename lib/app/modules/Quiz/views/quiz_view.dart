@@ -22,7 +22,7 @@ class QuizView extends GetView<QuizController> {
     return WillPopScope(
       onWillPop: () async {
         // await Get.off(() => const ControlView());
-        c.pageController.value.jumpToPage(c.allQuestions.length);
+        // c.pageController.value.jumpToPage(c.allQuestions.length);
         Get.back();
         return false;
       },
