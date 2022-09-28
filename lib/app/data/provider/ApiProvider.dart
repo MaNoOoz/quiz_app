@@ -41,7 +41,7 @@ class ApiProvider {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
-        // Logger().d("responseJson ---> ${responseJson}");
+        Logger().d("responseJson ---> ${responseJson}");
 
         // print(responseJson);
         return responseJson;
@@ -74,7 +74,6 @@ class ApiProvider {
     } else {
       headerToken = token;
     }
-
     Map<String, String> headers = {};
     headers["Content-Type"] = "application/json";
     headers["Accept"] = "application/json";

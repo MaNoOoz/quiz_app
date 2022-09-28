@@ -1,8 +1,8 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:quiz_app/app/modules/utili/Constants.dart';
 
 class SharedWidgets {
@@ -17,9 +17,13 @@ class SharedWidgets {
   }
 
   Widget buildLoading() {
-    return SpinKitRotatingCircle(
-      color: Colors.white,
-      size: 50.0,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(height: 100, width: 100, color: Colors.black, child: Lottie.asset("assets/images/loading.json")),
+        ],
+      ),
     );
   }
 

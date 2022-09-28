@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../Widgets/Common/SharedWidgets.dart';
 import '../../onBorading/views/on_borading_view.dart';
 import '../controllers/intro_screen_controller.dart';
 
@@ -21,7 +22,7 @@ class IntroScreenView extends GetView<IntroScreenController> {
             future: c.init(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
+                return SharedWidgets().buildLoading();
               } else if (snapshot.hasError) {
                 return errorView(snapshot);
               } else {
@@ -32,23 +33,23 @@ class IntroScreenView extends GetView<IntroScreenController> {
     );
   }
 
-  // Widget buildLoading() {
-  //   return SafeArea(
-  //     child: Material(
-  //       child: Scaffold(
-  //           body: Container(
-  //               color: Colors.black,
-  //               child: Column(
-  //                 children: [
-  //                   SPACEV10,
-  //                   SPACEV10,
-  //                   SharedWidgets().buildLogo(),
-  //                   SPACEV10,
-  //                   SPACEV10,
-  //                   // Center(child: SharedWidgets().buildLoading()),
-  //                 ],
-  //               ))),
-  //     ),
-  //   );
-  // }
+// Widget buildLoading() {
+//   return SafeArea(
+//     child: Material(
+//       child: Scaffold(
+//           body: Container(
+//               color: Colors.black,
+//               child: Column(
+//                 children: [
+//                   SPACEV10,
+//                   SPACEV10,
+//                   SharedWidgets().buildLogo(),
+//                   SPACEV10,
+//                   SPACEV10,
+//                   // Center(child: SharedWidgets().buildLoading()),
+//                 ],
+//               ))),
+//     ),
+//   );
+// }
 }

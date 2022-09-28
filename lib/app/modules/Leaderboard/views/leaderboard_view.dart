@@ -31,18 +31,18 @@ class LeaderboardView extends GetView<LeaderboardController> {
                   color: Colors.white,
                   // height: 400,
                   child: Obx(() {
-                    return Expanded(
+                    var q = Expanded(
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: c.allUsers.length,
                         shrinkWrap: true,
                         itemBuilder: (BuildContext context, int index) {
                           var model = c.allUsers[index];
-
                           return _buildItem(model: model, index: index);
                         },
                       ),
-                    );
+                    ).obs;
+                    return q.value;
                   }),
                 ),
               ],
