@@ -8,14 +8,9 @@ import 'package:quiz_app/app/data/local/LocalStorage.dart';
 import '../../../data/provider/ApiProvider.dart';
 
 class SendNameController extends GetxController {
-  //TODO: Implement SendNameController
-
-  final count = 0.obs;
-
   final TextEditingController nameController = TextEditingController();
   String _userName = "";
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
   get userName => _userName;
 
   set userName(value) {
@@ -42,20 +37,5 @@ class SendNameController extends GetxController {
 
     //;
     return res;
-  }
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
   }
 }

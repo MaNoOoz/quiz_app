@@ -24,6 +24,7 @@ dependencies:
   slide_countdown:
   feather_icons:
   flutter_spinkit:
+  shared_preferences:
 
 #  network
   http:

@@ -2,8 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gradient_colors/flutter_gradient_colors.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
-import 'package:quiz_app/app/data/models/GameModel.dart';
+import 'package:quiz_app/app/data/models/ScoreModel.dart';
 
 import '../../Widgets/Common/SharedWidgets.dart';
 import '../../utili/Constants.dart';
@@ -15,71 +14,18 @@ class ProfileView extends GetView<ProfileController> {
   @override
   Widget build(BuildContext context) {
     var c = Get.put(ProfileController());
-    Logger().d("build  ProfileView : ${c.userScoresList.length}");
+    // Logger().d("buildProfileView : ${c.userScoresList.length}");
 
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await c.getUserInfo();
-          },
-        ), //todo remove:
         body: Container(
-          // color: Colors.white,
+          color: Colors.white,
           height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomRight,
-              colors: GradientColors.octoberSilence,
-              // stops: [0.6, 0.7],
-            ),
-          ),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                buildTop(c),
-                // SPACEV10,
-                SPACEV10,
-                Obx(() {
-                  return buildUserInfo(c);
-                }),
-
-                SPACEV10,
-                SPACEV50,
-                SharedWidgets().buildTextLeft("النتائج السابقة", mainStyleTWM),
-                SPACEV10,
-
-                Card(
-                  color: Colors.transparent,
-                  child: Container(
-                    color: Colors.transparent,
-                    height: 300,
-                    child: Obx(() {
-                      var _scoreList = ListView.builder(
-                        itemCount: c.userScoresList.length,
-                        shrinkWrap: true,
-                        itemBuilder: (BuildContext context, int index) {
-                          var model = c.userScoresList[index];
-                          Logger().d("userScoresList : ${c.userScoresList.length}");
-                          Logger().d("model : ${model.numberOfGames}");
-
-                          return _buildItem(c.name.value, index, model);
-                        },
-                      ).obs;
-
-                      return c.isPlayed.value
-                          ? _scoreList.value
-                          : Center(
-                              child: const Text(
-                                "No Games Yet 😫",
-                                style: mainStyleTMBU,
-                              ),
-                            );
-                      ;
-                    }),
-                  ),
-                )
+                _buildTop(c),
+                _buildBody(c),
               ],
             ),
           ),
@@ -88,19 +34,78 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget buildUserInfo(ProfileController c) {
+  Widget _buildBody(ProfileController c) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 24, 24),
+      child: Column(
+        children: [
+          SPACEV10,
+          Obx(() {
+            return _buildUserInfo(c);
+          }),
+          SPACEV10,
+          SPACEV50,
+          SharedWidgets().buildTextLeft("النتائج السابقة", mainStyleTMBL),
+          SPACEV10,
+          Obx(() {
+            // return _buildScores(c);
+
+            return c.userScoresList.isEmpty
+                ? Center(
+                    child: const Text(
+                      "No Games Yet 😫",
+                      style: mainStyleTMBU,
+                    ),
+                  )
+                : _buildScores(c);
+          })
+        ],
+      ),
+    );
+  }
+
+  Widget _buildScores(ProfileController c) {
+    var list = Card(
+      color: Colors.green.shade50,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+        height: 300,
+        child: Obx(() {
+          var scoreList = ListView.builder(
+            itemCount: c.userScoresList.length,
+            shrinkWrap: true,
+            reverse: true,
+            itemBuilder: (BuildContext context, int index) {
+              var model = c.userScoresList[index];
+
+              return _buildItem(c.name.value, index, model);
+            },
+          ).obs;
+          return scoreList.value;
+        }),
+      ),
+    ).obs;
+    return list.value;
+  }
+
+  Widget _buildUserInfo(ProfileController c) {
     return Card(
       elevation: 1,
-      color: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      color: Colors.green.shade200,
       child: Container(
         padding: EdgeInsets.all(16),
         child: Row(
           children: <Widget>[
             ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
+              borderRadius: BorderRadius.all(Radius.circular(16)),
               child: Image.network(
                 "https://picsum.photos/150/150",
                 height: 90,
+                width: 90,
                 fit: BoxFit.fill,
               ),
             ),
@@ -112,8 +117,8 @@ class ProfileView extends GetView<ProfileController> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   SharedWidgets()
-                      .buildTextLeft("${c.name.value.toUpperCase()}", mainTitleWhite, align: TextAlign.center),
-                  SharedWidgets().buildTextLeft("${c.mobile.value}", mainStyleLBW, align: TextAlign.center),
+                      .buildTextLeft("${c.name.value.toUpperCase()}", mainStyleTMBL, align: TextAlign.center),
+                  SharedWidgets().buildTextLeft("${c.mobile.value}", mainStyleTMBU, align: TextAlign.center),
                 ],
               ),
             ),
@@ -124,47 +129,56 @@ class ProfileView extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildItem(name, int index, GameModel model) {
+  Widget _buildItem(name, int index, ScoreModel model) {
     return FadeOutUp(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Container(
-                height: 56,
-                width: 56,
-                color: ([...Colors.primaries]..shuffle()).first,
-                child: Center(
-                  child: Text(
-                    name.toString().characters.first.toUpperCase(),
-                    style: mainStyleTWM,
-                  ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.black.withOpacity(0.13)),
+            gradient: LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topRight,
+              colors: GradientColors.white,
+              // stops: [0.6, 0.7],
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ListTile(
+                      contentPadding: EdgeInsets.all(8),
+                      dense: true,
+                      title: Text(
+                        "${name}",
+                        style: mainStyleTMBL,
+                      ),
+                      subtitle: Row(
+                        children: [
+                          Text(
+                            "Score : ${model.score}",
+                            style: mainStyleLableSmall,
+                          ),
+                          const Spacer(),
+                          Text("Date : ${model.dateOfGame.substring(0, 10)}"),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            SPACEH10,
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "${name}",
-                    style: mainStyleTMBU,
-                  ),
-                  SPACEV10,
-                ],
-              ),
-            ),
-            Text("Score : ${model.score}"),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget buildTop(ProfileController c) {
+  Widget _buildTop(ProfileController c) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -172,7 +186,7 @@ class ProfileView extends GetView<ProfileController> {
         SharedWidgets().buildIconWithText(
             icon: const Icon(
               Icons.logout,
-              color: Colors.white,
+              color: Colors.black45,
             ),
             text: "",
             onPressed: () async {

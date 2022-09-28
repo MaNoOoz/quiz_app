@@ -4,8 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:quiz_app/app/data/app_controller/AppController.dart';
-import 'package:quiz_app/app/data/models/GameModel.dart';
 import 'package:quiz_app/app/modules/Quiz/models/QuestionModel.dart';
 
 import '../../../data/services/QuizService.dart';
@@ -17,38 +15,15 @@ class QuizController extends GetxController {
 
   // Page Control ----------------------------------------------------
   var firstPressSkip = true.obs;
-  final questionIndex = 0.obs;
-  final page = 0.obs;
   var pageController = PageController(initialPage: 0).obs;
-
-  onPageChanged(int val) {
-    page.value = val;
-    questionIndex.value = val;
-
-    Logger().e(page.value.toString());
-    // Logger().e(controller.questionIndex.toString());
-    // Logger().e(controller.isFirstPage.toString());
-    // Logger().e(controller.totalScore.toString());
-  }
-
-  resetPageController(int page) {
-    pageController.value = PageController(initialPage: page);
-  }
-
-  bool get isFirstPage {
-    return page.value == 0;
-  }
-
-  bool get isLastPage {
-    return page.value == allQuestions.length - 1;
-  }
 
   // ----------------------------------------------------
 
   /// Data ===================================================================================================
-  Rxn<QuestionModel> currentQuestion = Rxn<QuestionModel>();
+  final questionIndex = 0.obs;
   final allQuestions = <QuestionModel>[];
   QuizService quizService = QuizService();
+
   bool get isFirstQuestion => questionIndex.value > 0;
   bool get isLastQuestion => questionIndex.value >= allQuestions.length - 1;
 
@@ -67,74 +42,40 @@ class QuizController extends GetxController {
   }
 
   // Score & Game logic ===============================================================================================
-
   int _totalScore = 0;
-  int? selectedOption = -1;
-
   int get totalScore => _totalScore;
-  late Rx<GameModel> gameSession;
-  List<Icon> iconsScoreList = [];
-
-  void resetAll() {
-    pageController.value = PageController(initialPage: 0);
-    pageController.value.dispose();
-    currentQuestion.value = allQuestions[0];
-    questionIndex.value = 0;
-    currentQuestion.value = allQuestions[0];
-    if (_timer != null) _timer!.cancel();
-  }
+  // double _numberOfQuestion = 1;
+  // double get numberOfQuestion => _numberOfQuestion;
 
   void nextQuestion() {
-    Logger().d('nextQuestion ${questionIndex.value}');
-    nextPage();
+    Logger().e('nextQuestion ${questionIndex.value}');
 
     if (questionIndex.value >= allQuestions.length - 1) return;
     questionIndex.value++;
-    // page.value++;
-    currentQuestion.value = allQuestions[questionIndex.value];
-    // page.value = allQuestions.indexOf(currentQuestion.value);
+    // add to score
+    _totalScore++;
+    nextPage();
+
+    Logger().e('questionIndex ${questionIndex.value}');
+    Logger().e('_totalScore ${_totalScore}');
   }
 
   nextPage() {
-    Logger().d('nextQuestion $nextQuestion');
-    if (page.value >= allQuestions.length - 1) {
-      Get.toNamed(ResultView.routeName, arguments: gameSession); //
-
+    Logger().e('nextPage ${questionIndex.value}');
+    if (pageController.value.page! >= allQuestions.length - 1) {
+      Get.offNamed(ResultView.routeName, arguments: _totalScore); //
     } else {
       pageController.value.nextPage(duration: const Duration(seconds: 1), curve: Curves.easeOut);
     }
-
-    // if (pageController.value.hasClients) {
-    // }
+    // _numberOfQuestion = pageController.value.page! + 2;
   }
 
   checkAnswerIfRight({required String inputValue, required QuestionModel model}) {
-    // Map<int, int> selectedAnswers = {};
-    // int questionNumber = 0;
-
     Map map = model.toJson();
-    // Logger().d('$map');
-
-    // bring the key for correct answer:
     var answer = map['correct'];
-    // var chosenAnswer = map['correct'];
-    // Logger().d('$answer');
     var chosenAnswer = map.keys.firstWhere((k) => map[k] == inputValue, orElse: () => "WTF");
-
-    // Logger().d('chosenAnswer $chosenAnswer');
-
     if (chosenAnswer == answer) {
-      // add to score
-      _totalScore++;
-      // add score to object
-      gameSession.update((val) {
-        val?.score = _totalScore;
-        val?.numberOfGames = AppController().gamesCounter();
-      });
-
-      // Logger().e('current score $_totalScore');
-      // Logger().e('gameObject score${gameSession.value.score}');
-      // Logger().e('gameObject numberOfGames ${gameSession.value.numberOfGames}');
+      Logger().e("current score : $_totalScore");
 
       nextQuestion();
     } else {
@@ -185,9 +126,14 @@ class QuizController extends GetxController {
     // update();
   }
 
-  var stream = Duration(seconds: 3).obs;
-
   // Life Cycle =====================================================================================
+
+  void resetAll() {
+    pageController.value = PageController(initialPage: 0);
+    pageController.value.dispose();
+    questionIndex.value = 0;
+    _totalScore = 0;
+  }
 
   @override
   void onInit() async {
@@ -206,6 +152,8 @@ class QuizController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    if (_timer != null) _timer!.cancel();
+
     resetAll();
   }
 }

@@ -168,7 +168,7 @@ class SharedWidgets {
           onPressed: onPressed,
           disabledColor: Colors.grey,
           color: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
           child: Text(
             "$text",

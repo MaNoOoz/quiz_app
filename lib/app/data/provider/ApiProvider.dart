@@ -41,7 +41,7 @@ class ApiProvider {
     switch (response.statusCode) {
       case 200:
         var responseJson = json.decode(response.body.toString());
-        Logger().d("responseJson ---> ${responseJson}");
+        // Logger().d("responseJson ---> ${responseJson}");
 
         // print(responseJson);
         return responseJson;
@@ -70,7 +70,7 @@ class ApiProvider {
 
     if (token == null) {
       headerToken = storage.read(key: TOKEN);
-      Logger().d(": $headerToken");
+      // Logger().d(": $headerToken");
     } else {
       headerToken = token;
     }

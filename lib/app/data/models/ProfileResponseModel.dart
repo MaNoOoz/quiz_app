@@ -6,4 +6,8 @@ class ProfileResponseModel {
     name = json["name"];
     mobile = json["mobile"];
   }
+  Map<String, dynamic> toJson() => {
+        "name": name,
+        "mobile": mobile,
+      };
 }

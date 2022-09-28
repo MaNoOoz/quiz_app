@@ -77,10 +77,10 @@ const TextStyle mainTitleBlue = TextStyle(
 );
 const TextStyle mainTitleWhite = TextStyle(
   fontFamily: "DG Sahabah Bold",
-  fontSize: 34,
+  fontSize: 32,
   fontWeight: FontWeight.w500,
   color: Colors.white,
-  letterSpacing: 0.2,
+  letterSpacing: 0.15,
   wordSpacing: 0.5,
 );
 const TextStyle mainStyleTWM = TextStyle(
@@ -218,6 +218,9 @@ showEndTimeDialog() {
 /// Widgets =====================================================================================
 Widget SPACEV10 = const SizedBox(
   height: 10,
+);
+Widget SPACEV16 = const SizedBox(
+  height: 16,
 );
 Widget SPACEH10 = const SizedBox(
   width: 10,

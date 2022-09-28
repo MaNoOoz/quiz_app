@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:quiz_app/app/modules/utili/Constants.dart';
 
 import '../../../routes/app_pages.dart';
+import '../../Profile/controllers/profile_controller.dart';
 import '../../Widgets/Common/SharedWidgets.dart';
 import '../controllers/home_controller.dart';
 
@@ -14,25 +15,13 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     var c = Get.put(HomeController());
+    var cc = Get.put(ProfileController());
 
     return SafeArea(
       child: Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await c.getUserName();
-          },
-        ),
         body: Container(
           color: Colors.white,
           height: double.infinity,
-          // decoration: const BoxDecoration(
-          //   gradient: LinearGradient(
-          //     begin: Alignment.bottomCenter,
-          //     end: Alignment.topRight,
-          //     colors: GradientColors.white,
-          //     // stops: [0.6, 0.7],
-          //   ),
-          // ),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -41,20 +30,21 @@ class HomeView extends GetView<HomeController> {
                 child: Stack(
                   children: [
                     ListView(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       children: [
                         SPACEV50,
                         Align(alignment: AlignmentDirectional.topCenter, child: SharedWidgets().buildLogo()),
                         SPACEV50,
                         Obx(() {
                           return Row(
+                            textDirection: TextDirection.rtl,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              SharedWidgets().buildTextRight("👋  Hey", mainStyleTMBL, align: TextAlign.center),
+                              SharedWidgets().buildTextRight(" 👋  هلا ", mainTitleBlack, align: TextAlign.center),
                               SPACEH10,
-                              SharedWidgets().buildTextLeft("${c.userName.value.toUpperCase()}", mainTitleBlue,
-                                  align: TextAlign.center),
+                              SharedWidgets()
+                                  .buildTextLeft(cc.name.value.toUpperCase(), mainTitleBlue, align: TextAlign.center),
                             ],
                           );
                         }),
@@ -68,17 +58,18 @@ class HomeView extends GetView<HomeController> {
                               child: AnimatedTextKit(
                                 animatedTexts: [
                                   // TyperAnimatedText('👋  Hey , ', textAlign: TextAlign.center),
-                                  TyperAnimatedText('Ready to Test You knowledge??', textAlign: TextAlign.center),
-                                  TyperAnimatedText('and challenge Others!!', textAlign: TextAlign.center),
-                                  TyperAnimatedText('Answer as much questions as u can in 2 minutes',
+                                  TyperAnimatedText('جاهز لتحدي معلوماتك ؟؟ 🤔', textAlign: TextAlign.center),
+                                  TyperAnimatedText('جاهز للتغلب على الخصوم ؟! 💪', textAlign: TextAlign.center),
+                                  TyperAnimatedText('أجب على أكثر عدد ممكن من الأسئلة خلال 120 ثانية ',
                                       textAlign: TextAlign.center),
+                                  ScaleAnimatedText('إنطلق 🟢', textAlign: TextAlign.center),
                                 ],
                                 onTap: () {
                                   print("Tap Event");
                                 },
                                 totalRepeatCount: 1,
-                                pause: Duration(seconds: 2),
-                                // repeatForever: true,
+                                pause: const Duration(seconds: 2),
+                                repeatForever: true,
                                 stopPauseOnTap: true,
                               ),
                             ),

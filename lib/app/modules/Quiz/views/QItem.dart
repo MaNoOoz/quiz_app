@@ -24,9 +24,6 @@ class QCard extends StatelessWidget {
     return SizedBox(
       height: 500,
       child: ListView(
-        // mainAxisAlignment: MainAxisAlignment.start,
-        // textDirection: TextDirecconst tion.rtl,
-        // physics: const NeverScrollableScrollPhysics(),
         children: <Widget>[
           SizedBox(height: 100, child: SharedWidgets().buildTextRight('${model.question}', mainTitleBlack)),
           GestureDetector(
@@ -72,12 +69,12 @@ class QCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: 50,
+        height: 75,
         child: Container(
-          margin: EdgeInsets.fromLTRB(8, 0, 8, 16),
+          margin: const EdgeInsets.fromLTRB(8, 0, 8, 16),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(4)),
+            borderRadius: BorderRadius.all(Radius.circular(8)),
             border: Border.all(color: Colors.black54),
             // boxShadow: [
             //   BoxShadow(color: Colors.black54.withOpacity(0.1), blurRadius: 1, offset: Offset(0, 5)),
