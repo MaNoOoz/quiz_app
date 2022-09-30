@@ -1,5 +1,13 @@
 # quiz_app
 
+<h2> This app have following App UI's -:</h2>
+<h3 align="start" style="color:green" >1. Amazon UI </h3>
+ <p align="start">
+<img src="https://github.com/MaNoOoz/quiz_app/blob/masterdemo.gif" width="350"></img>
+<img src="https://github.com/MaNoOoz/Apps_Clones_Ui/blob/master/SCREENSHOTS/b.png" width="350"></img>
+<img src="https://github.com/MaNoOoz/Apps_Clones_Ui/blob/master/SCREENSHOTS/c.png" width="350"></img>
+<img src="https://github.com/MaNoOoz/Apps_Clones_Ui/blob/master/SCREENSHOTS/d.png" width="350"></img>
+
 A new Flutter project.
 
 ## Getting Started
