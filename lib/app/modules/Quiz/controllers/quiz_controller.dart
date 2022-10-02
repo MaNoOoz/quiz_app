@@ -50,7 +50,7 @@ class QuizController extends GetxController {
   void nextQuestion() {
     Logger().e('nextQuestion ${questionIndex.value}');
 
-    if (questionIndex.value >= allQuestions.length - 1) return;
+    if (questionIndex.value == allQuestions.length) return;
     questionIndex.value++;
     // add to score
     _totalScore++;
