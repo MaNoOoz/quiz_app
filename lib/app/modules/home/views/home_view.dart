@@ -82,7 +82,7 @@ class HomeView extends GetView<HomeController> {
                     ),
                     Align(
                         alignment: AlignmentDirectional.bottomCenter,
-                        child: SharedWidgets().buildRequestBtn("Quiz Me ! 🤞", mainStyleTWM, onPressed: () async {
+                        child: SharedWidgets().buildRequestBtn("Quiz Me !", mainStyleTWM, onPressed: () async {
                           c.startGame();
                         })),
                   ],
